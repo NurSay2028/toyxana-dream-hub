@@ -14,16 +14,228 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      artists: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          hall_id: string
+          id: string
+          image_url: string | null
+          name: string
+          performance_time: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          hall_id: string
+          id?: string
+          image_url?: string | null
+          name: string
+          performance_time?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          hall_id?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          performance_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artists_hall_id_fkey"
+            columns: ["hall_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_halls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bride_groom: {
+        Row: {
+          bride_name: string
+          bride_photo: string | null
+          created_at: string | null
+          groom_name: string
+          groom_photo: string | null
+          hall_id: string
+          id: string
+          love_story: string | null
+          wedding_date: string | null
+        }
+        Insert: {
+          bride_name: string
+          bride_photo?: string | null
+          created_at?: string | null
+          groom_name: string
+          groom_photo?: string | null
+          hall_id: string
+          id?: string
+          love_story?: string | null
+          wedding_date?: string | null
+        }
+        Update: {
+          bride_name?: string
+          bride_photo?: string | null
+          created_at?: string | null
+          groom_name?: string
+          groom_photo?: string | null
+          hall_id?: string
+          id?: string
+          love_story?: string | null
+          wedding_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bride_groom_hall_id_fkey"
+            columns: ["hall_id"]
+            isOneToOne: true
+            referencedRelation: "wedding_halls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      food_items: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          hall_id: string
+          id: string
+          image_url: string | null
+          is_today: boolean | null
+          name: string
+          price: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          hall_id: string
+          id?: string
+          image_url?: string | null
+          is_today?: boolean | null
+          name: string
+          price?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          hall_id?: string
+          id?: string
+          image_url?: string | null
+          is_today?: boolean | null
+          name?: string
+          price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_items_hall_id_fkey"
+            columns: ["hall_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_halls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hall_admins: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
+          hall_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          hall_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          hall_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hall_admins_hall_id_fkey"
+            columns: ["hall_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_halls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wedding_halls: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_hall_id: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +362,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin"],
+    },
   },
 } as const
