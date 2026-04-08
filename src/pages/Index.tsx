@@ -1,24 +1,28 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Chrome, Shield } from 'lucide-react';
+import { Chrome } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, loading, isSuperAdmin, isHallAdmin } = useAuth();
 
-  // Auto-redirect logged in users
-  if (!loading && user) {
-    if (isSuperAdmin) {
-      navigate('/super-admin', { replace: true });
-      return null;
+  useEffect(() => {
+    if (!loading && user) {
+      if (isSuperAdmin) {
+        navigate('/super-admin', { replace: true });
+      } else if (isHallAdmin) {
+        navigate('/admin', { replace: true });
+      } else {
+        // Logged in but not assigned — go to admin page which shows "not assigned" message
+        navigate('/admin', { replace: true });
+      }
     }
-    if (isHallAdmin) {
-      navigate('/admin', { replace: true });
-      return null;
-    }
-  }
+  }, [loading, user, isSuperAdmin, isHallAdmin, navigate]);
+
+  if (loading || user) return null;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">

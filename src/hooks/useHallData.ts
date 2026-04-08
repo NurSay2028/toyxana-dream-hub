@@ -25,6 +25,17 @@ export function useHallAdmins(hallId?: string) {
   });
 }
 
+export function useProfiles() {
+  return useQuery({
+    queryKey: ['profiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useFoodItems(hallId: string) {
   return useQuery({
     queryKey: ['food_items', hallId],
@@ -54,6 +65,18 @@ export function useBrideGroom(hallId: string) {
     queryKey: ['bride_groom', hallId],
     queryFn: async () => {
       const { data, error } = await supabase.from('bride_groom').select('*').eq('hall_id', hallId).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!hallId,
+  });
+}
+
+export function useBanners(hallId: string) {
+  return useQuery({
+    queryKey: ['banners', hallId],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('banners').select('*').eq('hall_id', hallId).order('sort_order', { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -155,4 +178,39 @@ export function useMutateBrideGroom(hallId: string) {
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['bride_groom', hallId] }),
   });
+}
+
+export function useMutateBanner(hallId: string) {
+  const qc = useQueryClient();
+  const create = useMutation({
+    mutationFn: async (item: { title?: string; image_url: string; sort_order?: number }) => {
+      const { error } = await supabase.from('banners').insert({ ...item, hall_id: hallId });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['banners', hallId] }),
+  });
+  const update = useMutation({
+    mutationFn: async ({ id, ...rest }: { id: string; title?: string; image_url?: string; sort_order?: number }) => {
+      const { error } = await supabase.from('banners').update(rest).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['banners', hallId] }),
+  });
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('banners').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['banners', hallId] }),
+  });
+  return { create, update, remove };
+}
+
+export async function uploadHallAsset(file: File, hallId: string): Promise<string> {
+  const ext = file.name.split('.').pop();
+  const path = `${hallId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from('hall-assets').upload(path, file);
+  if (error) throw error;
+  const { data } = supabase.storage.from('hall-assets').getPublicUrl(path);
+  return data.publicUrl;
 }
