@@ -71,11 +71,11 @@ export default function GuestPage() {
       {/* Banners */}
       {banners && banners.length > 0 && (
         <motion.section
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          variants={fadeUp}
-          className="container py-8"
+          transition={{ duration: 0.6 }}
+          className="py-8 px-4"
         >
           <BannerCarousel banners={banners} />
         </motion.section>
