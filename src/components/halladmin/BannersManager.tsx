@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useBanners, useMutateBanner, uploadHallAsset } from '@/hooks/useHallData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Trash2, Edit2, Image, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit2, Image, Upload, Crop } from 'lucide-react';
 import { toast } from 'sonner';
+import ImageCropDialog from '@/components/common/ImageCropDialog';
 
 interface Props { hallId: string; }
 
@@ -17,14 +18,29 @@ export default function BannersManager({ hallId }: Props) {
   const [editItem, setEditItem] = useState<any>(null);
   const [form, setForm] = useState({ title: '', image_url: '', sort_order: '0' });
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [cropTarget, setCropTarget] = useState<'new' | 'existing'>('new');
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const resetForm = () => setForm({ title: '', image_url: '', sort_order: '0' });
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropSrc(reader.result as string);
+      setCropTarget('new');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleCropped = async (blob: Blob) => {
+    setCropSrc(null);
     setUploading(true);
     try {
+      const file = new File([blob], `banner_${Date.now()}.jpg`, { type: 'image/jpeg' });
       const url = await uploadHallAsset(file, hallId);
       setForm(f => ({ ...f, image_url: url }));
       toast.success('Suwret júklendi!');
@@ -32,6 +48,13 @@ export default function BannersManager({ hallId }: Props) {
       toast.error(err.message || 'Suwret júklewde qátelik');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleEditExistingImage = () => {
+    if (form.image_url) {
+      setCropSrc(form.image_url);
+      setCropTarget('existing');
     }
   };
 
@@ -71,27 +94,22 @@ export default function BannersManager({ hallId }: Props) {
               <div>
                 <label className="mb-1 block text-sm font-medium">Suwret</label>
                 <div className="flex gap-2">
-                  <Input
-                    placeholder="Suwret URL"
-                    value={form.image_url}
-                    onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                    className="flex-1"
-                  />
-                  <label className="cursor-pointer">
-                    <Button variant="outline" size="icon" disabled={uploading} asChild>
-                      <span><Upload className="h-4 w-4" /></span>
+                  <Button variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} className="flex-1">
+                    <Upload className="mr-1 h-4 w-4" /> {uploading ? 'Júkleniwde...' : 'Suwret tańlaw'}
+                  </Button>
+                  {form.image_url && (
+                    <Button variant="outline" size="icon" onClick={handleEditExistingImage} title="Suwretti qırqıw">
+                      <Crop className="h-4 w-4" />
                     </Button>
-                    <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-                  </label>
+                  )}
                 </div>
+                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                 {form.image_url && (
                   <img src={form.image_url} alt="Preview" className="mt-2 h-32 w-full rounded-md object-cover" />
                 )}
               </div>
               <Input placeholder="Tartip (0, 1, 2...)" type="number" value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: e.target.value }))} />
-              <Button onClick={handleSave} disabled={!form.image_url || uploading} className="w-full gold-gradient text-primary-foreground">
-                {uploading ? 'Júkleniwde...' : 'Saqlaw'}
-              </Button>
+              <Button onClick={handleSave} disabled={!form.image_url || uploading} className="w-full gold-gradient text-primary-foreground">Saqlaw</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -122,6 +140,16 @@ export default function BannersManager({ hallId }: Props) {
           <Image className="mb-2 h-10 w-10 text-muted-foreground/50" />
           <p className="text-muted-foreground">Házirshe bannerler joq</p>
         </div>
+      )}
+
+      {cropSrc && (
+        <ImageCropDialog
+          open
+          imageSrc={cropSrc}
+          aspect={16 / 7}
+          onClose={() => setCropSrc(null)}
+          onComplete={handleCropped}
+        />
       )}
     </div>
   );
