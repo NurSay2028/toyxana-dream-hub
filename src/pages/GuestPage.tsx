@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { useFoodItems, useArtists, useBrideGroom, useBanners } from '@/hooks/useHallData';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, UtensilsCrossed, Music, Clock, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { UtensilsCrossed, Music, Clock, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import BrideGroomSection from '@/components/guest/BrideGroomSection';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { useState, useEffect } from 'react';
 
@@ -139,50 +140,7 @@ export default function GuestPage() {
       )}
 
       {/* Bride & Groom */}
-      {brideGroom && (
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          variants={stagger}
-          className="container py-12"
-        >
-          <motion.div variants={fadeUp} className="mb-8 text-center">
-            <Heart className="mx-auto mb-2 h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-bold font-serif text-gold-gradient">Kelin ha'm Kuyew</h2>
-          </motion.div>
-          <motion.div variants={fadeUp} className="mx-auto max-w-3xl">
-            <div className="glass rounded-lg p-8">
-              <div className="flex flex-col items-center gap-8 sm:flex-row sm:justify-center">
-                <div className="text-center">
-                  {brideGroom.groom_photo && (
-                    <img src={brideGroom.groom_photo} alt={brideGroom.groom_name} className="mx-auto mb-3 h-32 w-32 rounded-full border-4 border-primary/30 object-cover" />
-                  )}
-                  <h3 className="text-xl font-bold font-serif">{brideGroom.groom_name}</h3>
-                  <p className="text-sm text-muted-foreground">Kuyew</p>
-                </div>
-                <Heart className="h-10 w-10 text-primary animate-pulse" />
-                <div className="text-center">
-                  {brideGroom.bride_photo && (
-                    <img src={brideGroom.bride_photo} alt={brideGroom.bride_name} className="mx-auto mb-3 h-32 w-32 rounded-full border-4 border-primary/30 object-cover" />
-                  )}
-                  <h3 className="text-xl font-bold font-serif">{brideGroom.bride_name}</h3>
-                  <p className="text-sm text-muted-foreground">Kelin</p>
-                </div>
-              </div>
-              {brideGroom.wedding_date && (
-                <p className="mt-6 text-center text-muted-foreground">Toy kúni: <span className="font-semibold text-foreground">{brideGroom.wedding_date}</span></p>
-              )}
-              {brideGroom.love_story && (
-                <div className="mt-6 border-t border-border pt-6">
-                  <h4 className="mb-2 text-center font-serif text-lg font-semibold">Gáp-hikáyat</h4>
-                  <p className="text-center text-muted-foreground leading-relaxed">{brideGroom.love_story}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </motion.section>
-      )}
+      {brideGroom && <BrideGroomSection data={brideGroom} />}
 
       {/* Food Menu */}
       {todayFoods && todayFoods.length > 0 && (
