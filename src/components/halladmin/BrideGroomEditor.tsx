@@ -1,14 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useBrideGroom, useMutateBrideGroom } from '@/hooks/useHallData';
+import { useBrideGroom, useMutateBrideGroom, uploadHallAsset } from '@/hooks/useHallData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart } from 'lucide-react';
+import { Heart, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Props { hallId: string; }
+
+function PhotoUpload({ label, currentUrl, onUpload, hallId }: { label: string; currentUrl: string; onUpload: (url: string) => void; hallId: string }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadHallAsset(file, hallId);
+      onUpload(url);
+      toast.success("Suwret júklendi!");
+    } catch {
+      toast.error("Suwret júklenwde qátelik!");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="mb-1 block text-sm font-medium">{label}</label>
+      <div
+        onClick={() => inputRef.current?.click()}
+        className="relative flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-primary/30 bg-muted/30 transition-colors hover:border-primary/60"
+      >
+        {currentUrl ? (
+          <>
+            <img src={currentUrl} alt={label} className="h-full w-full object-cover" />
+            <button
+              onClick={e => { e.stopPropagation(); onUpload(''); }}
+              className="absolute right-2 top-2 rounded-full bg-destructive p-1 text-destructive-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Upload className="h-8 w-8" />
+            <span className="text-sm">{uploading ? 'Júkleniwde...' : 'Suwret júklew'}</span>
+          </div>
+        )}
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+    </div>
+  );
+}
 
 export default function BrideGroomEditor({ hallId }: Props) {
   const { data } = useBrideGroom(hallId);
@@ -51,18 +99,12 @@ export default function BrideGroomEditor({ hallId }: Props) {
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium">Kelin foto URL</label>
-              <Input value={form.bride_photo} onChange={e => setForm(f => ({ ...f, bride_photo: e.target.value }))} placeholder="https://..." />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium">Kuyew foto URL</label>
-              <Input value={form.groom_photo} onChange={e => setForm(f => ({ ...f, groom_photo: e.target.value }))} placeholder="https://..." />
-            </div>
+            <PhotoUpload label="Kelin suwreti" currentUrl={form.bride_photo} hallId={hallId} onUpload={url => setForm(f => ({ ...f, bride_photo: url }))} />
+            <PhotoUpload label="Kuyew suwreti" currentUrl={form.groom_photo} hallId={hallId} onUpload={url => setForm(f => ({ ...f, groom_photo: url }))} />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Toy kúni</label>
-            <Input value={form.wedding_date} onChange={e => setForm(f => ({ ...f, wedding_date: e.target.value }))} placeholder="2025-06-15" />
+            <Input type="date" value={form.wedding_date} onChange={e => setForm(f => ({ ...f, wedding_date: e.target.value }))} />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Gáp-hikáyat</label>
