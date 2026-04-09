@@ -7,18 +7,29 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
+import ImageCropDialog from '@/components/common/ImageCropDialog';
 
 interface Props { hallId: string; }
 
 function PhotoUpload({ label, currentUrl, onUpload, hallId }: { label: string; currentUrl: string; onUpload: (url: string) => void; hallId: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
 
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result as string);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleCropped = async (blob: Blob) => {
+    setCropSrc(null);
     setUploading(true);
     try {
+      const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
       const url = await uploadHallAsset(file, hallId);
       onUpload(url);
       toast.success("Suwret júklendi!");
@@ -54,6 +65,15 @@ function PhotoUpload({ label, currentUrl, onUpload, hallId }: { label: string; c
         )}
       </div>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      {cropSrc && (
+        <ImageCropDialog
+          open
+          imageSrc={cropSrc}
+          aspect={1}
+          onClose={() => setCropSrc(null)}
+          onComplete={handleCropped}
+        />
+      )}
     </div>
   );
 }
