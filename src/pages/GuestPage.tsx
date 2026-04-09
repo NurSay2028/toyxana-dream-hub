@@ -3,68 +3,10 @@ import { motion } from 'framer-motion';
 import { useFoodItems, useArtists, useBrideGroom, useBanners } from '@/hooks/useHallData';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { UtensilsCrossed, Music, Clock, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { UtensilsCrossed, Music, Clock, MapPin } from 'lucide-react';
 import BrideGroomSection from '@/components/guest/BrideGroomSection';
+import BannerCarousel from '@/components/guest/BannerCarousel';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { useState, useEffect } from 'react';
-
-function BannerCarousel({ banners }: { banners: { id: string; image_url: string; title: string | null }[] }) {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (banners.length <= 1) return;
-    const timer = setInterval(() => setCurrent(c => (c + 1) % banners.length), 5000);
-    return () => clearInterval(timer);
-  }, [banners.length]);
-
-  if (banners.length === 0) return null;
-
-  return (
-    <div className="relative w-full overflow-hidden rounded-lg" style={{ aspectRatio: '16/7' }}>
-      {banners.map((b, i) => (
-        <motion.img
-          key={b.id}
-          src={b.image_url}
-          alt={b.title || 'Banner'}
-          className="absolute inset-0 h-full w-full object-cover"
-          initial={false}
-          animate={{ opacity: i === current ? 1 : 0 }}
-          transition={{ duration: 0.6 }}
-        />
-      ))}
-      {banners.length > 1 && (
-        <>
-          <button
-            onClick={() => setCurrent(c => (c - 1 + banners.length) % banners.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-1.5 backdrop-blur-sm"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => setCurrent(c => (c + 1) % banners.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/60 p-1.5 backdrop-blur-sm"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {banners.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`h-2 w-2 rounded-full transition-all ${i === current ? 'bg-primary w-4' : 'bg-background/60'}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-      {banners[current]?.title && (
-        <div className="absolute bottom-8 left-0 right-0 text-center">
-          <span className="rounded-full bg-background/70 px-4 py-1 text-sm font-medium backdrop-blur-sm">{banners[current].title}</span>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function GuestPage() {
   const { hallId } = useParams<{ hallId: string }>();
