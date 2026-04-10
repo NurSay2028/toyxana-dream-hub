@@ -31,12 +31,13 @@ const slideVariants = {
   }),
 };
 
-export default function BannerCarousel({ banners }: { banners: Banner[] }) {
-  // ✅ HOOKS always come FIRST
+export default function BannerCarousel({ banners = [] }: { banners?: Banner[] }) {
+  // ✅ Default value: agar kelmasa = []
+  
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
 
-  // ✅ Then the conditional check
+  // ✅ Xavfsiz tekshiruv
   if (!banners || banners.length === 0) return null;
 
   const index = ((page % banners.length) + banners.length) % banners.length;
