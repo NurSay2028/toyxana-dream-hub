@@ -31,14 +31,14 @@ const slideVariants = {
   }),
 };
 
-export default function BannerCarousel({ banners = [] }: { banners?: Banner[] }) {
-  // ✅ Default value: agar kelmasa = []
-  
+export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
 
-  // ✅ Xavfsiz tekshiruv
-  if (!banners || banners.length === 0) return null;
+  // 🔥 KRITIK: Ma'lumot kelguncha hech narsa ko'rsatma
+  if (!banners || banners.length === 0) {
+    return null;
+  }
 
   const index = ((page % banners.length) + banners.length) % banners.length;
 
@@ -65,7 +65,6 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Background blur layer */}
       <div className="absolute inset-0 overflow-hidden">
         <img
           src={banners[index].image_url}
@@ -74,7 +73,6 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
         />
       </div>
 
-      {/* Main slide */}
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={page}
@@ -100,10 +98,8 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
             className="h-full w-full object-cover object-center"
           />
 
-          {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-          {/* Title overlay */}
           {banners[index].title && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -119,7 +115,6 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation arrows */}
       {banners.length > 1 && (
         <>
           <motion.button
@@ -141,7 +136,6 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
         </>
       )}
 
-      {/* Dots indicator */}
       {banners.length > 1 && (
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
           {banners.map((_, i) => (
@@ -164,7 +158,6 @@ export default function BannerCarousel({ banners = [] }: { banners?: Banner[] })
         </div>
       )}
 
-      {/* Slide counter */}
       {banners.length > 1 && (
         <div className="absolute right-4 top-4 z-10 rounded-full bg-black/30 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
           {index + 1} / {banners.length}
