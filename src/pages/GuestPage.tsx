@@ -28,7 +28,7 @@ export default function GuestPage() {
   const { data: artists } = useArtists(hallId!);
   const { data: banners } = useBanners(hallId!);
 
-  const todayFoods = foods?.filter(f => f.is_today);
+  const todayFoods = (foods ?? []).filter(f => f.is_today);
 
   if (hallLoading) return <LoadingSpinner />;
   if (!hall) return (
