@@ -57,8 +57,8 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl shadow-2xl"
-      style={{ aspectRatio: '9/16' }}
+      className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl"
+      style={{ aspectRatio: '16/7' }}  // ✅ 1-changes: 9/16 -> 16/7
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -94,7 +94,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
           <img
             src={banners[index].image_url}
             alt={banners[index].title || 'Banner'}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-center"  // ✅ 2-changes: object-center qo'shildi
           />
 
           {/* Gradient overlay for text readability */}
@@ -108,7 +108,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="absolute bottom-20 left-0 right-0 px-6 text-center"
             >
-              <h3 className="text-2xl font-bold font-serif text-white drop-shadow-lg">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white drop-shadow-lg">
                 {banners[index].title}
               </h3>
             </motion.div>
@@ -152,7 +152,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               {i === index && (
                 <motion.div
                   layoutId="activeDot"
-                  className="absolute inset-0 rounded-full gold-gradient"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
                   transition={{ type: 'spring', stiffness: 300 }}
                 />
               )}
