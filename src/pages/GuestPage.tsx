@@ -33,7 +33,7 @@ export default function GuestPage() {
   if (hallLoading) return <LoadingSpinner />;
   if (!hall) return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <p className="text-muted-foreground">Toyxona tabılmadı</p>
+      <p className="text-muted-foreground">Toyxana tabılmadı</p>
     </div>
   );
 
@@ -52,7 +52,7 @@ export default function GuestPage() {
       >
         <div className="absolute inset-0 gold-gradient opacity-10" />
         <motion.div variants={fadeUp} className="relative z-10">
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-muted-foreground">As salaman alaykum</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-muted-foreground">Assalawma alaykum</p>
           <h1 className="mb-4 text-4xl font-bold font-serif text-gold-gradient sm:text-6xl">{hall.name}</h1>
           {hall.address && <p className="flex items-center justify-center gap-1 text-muted-foreground"><MapPin className="h-4 w-4" />{hall.address}</p>}
           {tableNum && (
@@ -62,7 +62,7 @@ export default function GuestPage() {
               transition={{ delay: 0.5, type: 'spring' }}
               className="mt-6 inline-block rounded-full gold-gradient px-6 py-2 text-primary-foreground font-semibold"
             >
-              Stol nomiri: {tableNum}
+              Stol nomeri: {tableNum}
             </motion.div>
           )}
         </motion.div>
@@ -95,13 +95,13 @@ export default function GuestPage() {
         >
           <motion.div variants={fadeUp} className="mb-8 text-center">
             <UtensilsCrossed className="mx-auto mb-2 h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-bold font-serif text-gold-gradient">Búgingi ta'mlar</h2>
+            <h2 className="text-3xl font-bold font-serif text-gold-gradient">Búgingi taǵamlar</h2>
           </motion.div>
           <motion.div variants={stagger} className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {todayFoods.map(food => (
               <motion.div key={food.id} variants={fadeUp} className="glass rounded-lg p-5">
                 <h4 className="font-semibold text-lg">{food.name}</h4>
-                {food.price && <p className="text-primary font-medium">{Number(food.price).toLocaleString()} so'm</p>}
+                {food.price && <p className="text-primary font-medium">{Number(food.price).toLocaleString()} som</p>}
                 {food.description && <p className="mt-1 text-sm text-muted-foreground">{food.description}</p>}
               </motion.div>
             ))}

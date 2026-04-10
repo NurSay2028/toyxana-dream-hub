@@ -27,7 +27,7 @@ export default function LoginPage() {
         className="glass w-full max-w-md rounded-lg p-8 text-center"
       >
         <h1 className="mb-2 text-3xl font-bold font-serif text-gold-gradient">NurSay Toyxana</h1>
-        <p className="mb-8 text-muted-foreground">Toyxona basqarıw sistemaına kiriń</p>
+        <p className="mb-8 text-muted-foreground">Toyxana basqarıw sistemasına kiriń</p>
         <Button
           onClick={handleLogin}
           disabled={loading}
@@ -35,7 +35,7 @@ export default function LoginPage() {
           size="lg"
         >
           <Chrome className="mr-2 h-5 w-5" />
-          {loading ? 'Kiriliwde...' : 'Google arqali kirisiw'}
+          {loading ? 'Kiriwde...' : 'Google arqali kiriw'}
         </Button>
         <button
           onClick={() => navigate('/')}

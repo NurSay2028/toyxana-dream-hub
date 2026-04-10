@@ -36,7 +36,7 @@ export default function SuperAdminDashboard() {
     await create.mutateAsync(form);
     setForm({ name: '', address: '', phone: '' });
     setAddOpen(false);
-    toast.success('Toyxona qosıldı!');
+    toast.success('Toyxana qosıldı!');
   };
 
   const handleUpdate = async () => {
@@ -44,13 +44,13 @@ export default function SuperAdminDashboard() {
     await update.mutateAsync({ id: editHall.id, ...form });
     setEditHall(null);
     setForm({ name: '', address: '', phone: '' });
-    toast.success('Toyxona jańalandı!');
+    toast.success('Toyxana jańalandı!');
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Oshiriwdi tastıyqlaysızba?')) return;
     await remove.mutateAsync(id);
-    toast.success('Toyxona oshirildi!');
+    toast.success('Toyxana óshirildi!');
   };
 
   const handleAddAdmin = async (hallId: string) => {
@@ -67,7 +67,7 @@ export default function SuperAdminDashboard() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success('Admin tayınlandı!');
+      toast.success('Admin qılındı!');
       qc.invalidateQueries({ queryKey: ['hall_admins'] });
       setSelectedUserId('');
       setAdminOpen(null);
@@ -78,7 +78,7 @@ export default function SuperAdminDashboard() {
     const { error } = await supabase.from('hall_admins').delete().eq('id', id);
     if (error) toast.error(error.message);
     else {
-      toast.success('Admin oshirildi!');
+      toast.success('Admin óshirildi!');
       qc.invalidateQueries({ queryKey: ['hall_admins'] });
     }
   };
@@ -92,22 +92,22 @@ export default function SuperAdminDashboard() {
       <main className="container py-8">
         <Tabs defaultValue="halls">
           <TabsList className="glass mb-6">
-            <TabsTrigger value="halls" className="flex items-center gap-1"><Building2 className="h-4 w-4" /> Toyxonalar</TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-1"><Users className="h-4 w-4" /> Ro'yxattan ótkenler</TabsTrigger>
+            <TabsTrigger value="halls" className="flex items-center gap-1"><Building2 className="h-4 w-4" /> Toyxanalar</TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-1"><Users className="h-4 w-4" /> Dizimnen ótkenler</TabsTrigger>
           </TabsList>
 
           <TabsContent value="halls">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold font-serif">Barsha toyxonalar</h2>
+              <h2 className="text-2xl font-bold font-serif">Bárshe toyxanalar</h2>
               <Dialog open={addOpen} onOpenChange={setAddOpen}>
                 <DialogTrigger asChild>
                   <Button className="gold-gradient text-primary-foreground"><Plus className="mr-1 h-4 w-4" /> Qosıw</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle className="font-serif">Jańa toyxona qosıw</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle className="font-serif">Jańadan toyxana qosıw</DialogTitle></DialogHeader>
                   <div className="space-y-3">
-                    <Input placeholder="Toyxona atı" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
-                    <Input placeholder="Manzil" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
+                    <Input placeholder="Toyxana atı" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                    <Input placeholder="Mánzil" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
                     <Input placeholder="Telefon" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
                     <Button onClick={handleCreate} disabled={!form.name || create.isPending} className="w-full gold-gradient text-primary-foreground">
                       {create.isPending ? 'Saqlanıwda...' : 'Saqlaw'}
@@ -119,7 +119,7 @@ export default function SuperAdminDashboard() {
 
             <Dialog open={!!editHall} onOpenChange={v => { if (!v) setEditHall(null); }}>
               <DialogContent>
-                <DialogHeader><DialogTitle className="font-serif">Toyxona o'zgertiw</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle className="font-serif">Toyxana o'zgertiw</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <Input placeholder="Toyxona atı" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                   <Input placeholder="Manzil" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
@@ -202,7 +202,7 @@ export default function SuperAdminDashboard() {
                       </div>
                       {isAdmin ? (
                         <div className="mt-2 rounded-md bg-primary/10 px-2 py-1 text-xs text-primary font-medium">
-                          ✓ Admin: {hallName || 'Toyxona'}
+                          ✓ Admin: {hallName || 'Toyxana'}
                         </div>
                       ) : (
                         <p className="mt-2 text-xs text-muted-foreground italic">Házirshe tayınlanbag'an</p>
@@ -212,7 +212,7 @@ export default function SuperAdminDashboard() {
                 );
               })}
               {(!profiles || profiles.length === 0) && (
-                <p className="text-muted-foreground col-span-full text-center py-8">Házirshe hesh kim ro'yxattan ótpegen</p>
+                <p className="text-muted-foreground col-span-full text-center py-8">Házirshe hesh kim dizimnen ótpegen</p>
               )}
             </div>
           </TabsContent>
@@ -223,7 +223,7 @@ export default function SuperAdminDashboard() {
           <DialogContent>
             <DialogHeader><DialogTitle className="font-serif">Admin tayınlaw</DialogTitle></DialogHeader>
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Google orqalı kirgen paydalanıwshılar tiziminen tańlań:</p>
+              <p className="text-sm text-muted-foreground">Google orqalı kirgen paydalanıwshılar diziminen tańlań:</p>
               <Select value={selectedUserId} onValueChange={setSelectedUserId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Paydalanıwshı tańlań" />
@@ -241,7 +241,7 @@ export default function SuperAdminDashboard() {
                 </SelectContent>
               </Select>
               {availableUsers.length === 0 && (
-                <p className="text-sm text-muted-foreground italic">Tayınlaw ushın paydalanıwshı joq. Aldın Google menen kirisiw kerek.</p>
+                <p className="text-sm text-muted-foreground italic">Tayınlaw ushın paydalanıwshı joq. Aldın Google menen kiriw kerek.</p>
               )}
               <Button
                 onClick={() => adminOpen && handleAddAdmin(adminOpen)}

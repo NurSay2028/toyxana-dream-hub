@@ -32,10 +32,10 @@ const Index = () => {
         transition={{ duration: 0.6 }}
         className="text-center"
       >
-        <p className="mb-2 text-sm font-medium uppercase tracking-widest text-muted-foreground">Toyxona basqarıw sisteması</p>
-        <h1 className="mb-4 text-5xl font-bold font-serif text-gold-gradient sm:text-7xl">NurSay Toyxana</h1>
+        <p className="mb-2 text-sm font-medium uppercase tracking-widest text-muted-foreground">Toyxana basqarıw sisteması</p>
+        <h1 className="mb-4 text-5xl font-bold font-serif text-gold-gradient sm:text-7xl">NurSay</h1>
         <p className="mb-8 max-w-md text-muted-foreground">
-          Toyxonańızdı ońay basqarıń — ta'mlar, artistler, kelin-kuyew mag'lıwmatları ha'm QR kodlar
+          Toyxanańızdı ańsat basqarıń — taǵamlar, artistler, kelin-kúyew maǵlıwmatları ha'm QR-kodlar
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button
@@ -44,7 +44,7 @@ const Index = () => {
             onClick={() => navigate('/login')}
           >
             <Chrome className="mr-2 h-5 w-5" />
-            Admin kirisiw
+            Admin bolıw
           </Button>
         </div>
       </motion.div>
