@@ -32,11 +32,12 @@ const slideVariants = {
 };
 
 export default function BannerCarousel({ banners }: { banners: Banner[] }) {
-
-  if (!banners || banners.length === 0) return null;
-
+  // ✅ HOOKS always come FIRST
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
+
+  // ✅ Then the conditional check
+  if (!banners || banners.length === 0) return null;
 
   const index = ((page % banners.length) + banners.length) % banners.length;
 
@@ -59,7 +60,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
   return (
     <div
       className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl shadow-2xl"
-      style={{ aspectRatio: '9/16' }}  // 9:16 saqlanadi
+      style={{ aspectRatio: '9/16' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -95,10 +96,10 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
           <img
             src={banners[index].image_url}
             alt={banners[index].title || 'Banner'}
-            className="h-full w-full object-cover object-center"  // ✅ Faqat shu qator o'zgardi
+            className="h-full w-full object-cover object-center"
           />
 
-          {/* Gradient overlay */}
+          {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
           {/* Title overlay */}
