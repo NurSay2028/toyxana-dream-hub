@@ -213,7 +213,7 @@ export default function BannersManager({ hallId }: Props) {
         <ImageCropDialog
           open
           imageSrc={cropSrc}
-          aspect={16 / 7}
+          aspect={7 / 16}
           onClose={() => setCropSrc(null)}
           onComplete={handleCropped}
         />
