@@ -33,7 +33,7 @@ const slideVariants = {
 
 export default function BannerCarousel({ banners }: { banners: Banner[] }) {
 
-  if (!banners || banners.length === 0) return null; // 🔥 FIX
+  if (!banners || banners.length === 0) return null;
 
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
@@ -56,12 +56,10 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
     else if (swipe > swipeConfidenceThreshold) paginate(-1);
   };
 
-
-
   return (
     <div
       className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl shadow-2xl"
-      style={{ aspectRatio: '9/16' }}
+      style={{ aspectRatio: '9/16' }}  // 9:16 saqlanadi
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -97,10 +95,10 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
           <img
             src={banners[index].image_url}
             alt={banners[index].title || 'Banner'}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-center"  // ✅ Faqat shu qator o'zgardi
           />
 
-          {/* Gradient overlay for text readability */}
+          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
           {/* Title overlay */}
@@ -155,7 +153,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               {i === index && (
                 <motion.div
                   layoutId="activeDot"
-                  className="absolute inset-0 rounded-full gold-gradient"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
                   transition={{ type: 'spring', stiffness: 300 }}
                 />
               )}
