@@ -35,6 +35,8 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
 
+    if (banners.length === 0) return null;
+
   const index = ((page % banners.length) + banners.length) % banners.length;
 
   const paginate = useCallback((newDirection: number) => {
@@ -53,7 +55,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
     else if (swipe > swipeConfidenceThreshold) paginate(-1);
   };
 
-  if (banners.length === 0) return null;
+
 
   return (
     <div
