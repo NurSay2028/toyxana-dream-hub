@@ -122,7 +122,7 @@ export default function BannersManager({ hallId }: Props) {
                 >
                   {form.image_url ? (
                     <>
-                      <img src={form.image_url} alt="Preview" className="h-full w-full rounded-lg object-cover" style={{ aspectRatio: '16/9' }} />
+                      <img src={form.image_url} alt="Preview" className="h-full w-full rounded-lg object-cover" style={{ aspectRatio: '9/16' }} />
                       <div className="absolute bottom-2 right-2 flex gap-1.5">
                         <Button
                           type="button"
@@ -213,7 +213,7 @@ export default function BannersManager({ hallId }: Props) {
         <ImageCropDialog
           open
           imageSrc={cropSrc}
-          aspect={7 / 16}
+          aspect={9 / 16}
           onClose={() => setCropSrc(null)}
           onComplete={handleCropped}
         />
