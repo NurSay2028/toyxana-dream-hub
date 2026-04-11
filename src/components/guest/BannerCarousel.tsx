@@ -35,10 +35,13 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
 
-  // 🔥 KRITIK: Ma'lumot kelguncha hech narsa ko'rsatma
+  // 🔥 MUHIM: banners undefined yoki bo'sh bo'lsa, hech narsa ko'rsatma
   if (!banners || banners.length === 0) {
+    console.log("⏳ BannerCarousel: No banners yet, waiting...");
     return null;
   }
+
+  console.log("✅ BannerCarousel: Rendering with", banners.length, "banners");
 
   const index = ((page % banners.length) + banners.length) % banners.length;
 
@@ -65,6 +68,7 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Blur background */}
       <div className="absolute inset-0 overflow-hidden">
         <img
           src={banners[index].image_url}
@@ -73,6 +77,7 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
         />
       </div>
 
+      {/* Main slide */}
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={page}
@@ -84,7 +89,6 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
           transition={{
             x: { type: 'spring', stiffness: 300, damping: 30 },
             opacity: { duration: 0.3 },
-            scale: { duration: 0.4 },
           }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -97,9 +101,8 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
             alt={banners[index].title || 'Banner'}
             className="h-full w-full object-cover object-center"
           />
-
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-
+          
           {banners[index].title && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -115,13 +118,14 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
         </motion.div>
       </AnimatePresence>
 
+      {/* Navigatsiya */}
       {banners.length > 1 && (
         <>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => paginate(-1)}
-            className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-md transition-colors hover:bg-white/40"
+            className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-md hover:bg-white/40"
           >
             <ChevronLeft className="h-5 w-5 text-white" />
           </motion.button>
@@ -129,20 +133,21 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => paginate(1)}
-            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-md transition-colors hover:bg-white/40"
+            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-md hover:bg-white/40"
           >
             <ChevronRight className="h-5 w-5 text-white" />
           </motion.button>
         </>
       )}
 
+      {/* Nuqtalar */}
       {banners.length > 1 && (
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
           {banners.map((_, i) => (
             <motion.button
               key={i}
               onClick={() => setPage([i, i > index ? 1 : -1])}
-              className="relative h-2 rounded-full bg-white/30 backdrop-blur-sm"
+              className="relative h-2 rounded-full bg-white/30"
               animate={{ width: i === index ? 24 : 8 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
@@ -158,11 +163,12 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
         </div>
       )}
 
+      {/* Sanoq */}
       {banners.length > 1 && (
-        <div className="absolute right-4 top-4 z-10 rounded-full bg-black/30 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+        <div className="absolute right-4 top-4 z-10 rounded-full bg-black/30 px-3 py-1 text-xs text-white backdrop-blur-sm">
           {index + 1} / {banners.length}
         </div>
       )}
     </div>
   );
-}
+}    
