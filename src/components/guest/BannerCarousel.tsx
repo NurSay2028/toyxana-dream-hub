@@ -31,29 +31,43 @@ const slideVariants = {
   }),
 };
 
-export default function BannerCarousel({ banners }: { banners: Banner[] }) {
+export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
+  
+  // 🔥 KRITIK: banners ma'lumotini local statega saqlaymiz
+  const [safeBanners, setSafeBanners] = useState<Banner[]>([]);
 
-  const index = ((page % banners.length) + banners.length) % banners.length;
+  // 🔥 banners o'zgarganda local state yangilanadi
+  useEffect(() => {
+    if (banners && Array.isArray(banners) && banners.length > 0) {
+      console.log("✅ Banners loaded:", banners.length);
+      setSafeBanners(banners);
+    }
+  }, [banners]);
+
+  // Agar ma'lumot bo'lmasa, hech narsa ko'rsatma
+  if (!safeBanners.length) {
+    return null;
+  }
+
+  const index = ((page % safeBanners.length) + safeBanners.length) % safeBanners.length;
 
   const paginate = useCallback((newDirection: number) => {
     setPage(([p]) => [p + newDirection, newDirection]);
   }, []);
 
   useEffect(() => {
-    if (banners.length <= 1 || isHovered) return;
+    if (safeBanners.length <= 1 || isHovered) return;
     const timer = setInterval(() => paginate(1), 4500);
     return () => clearInterval(timer);
-  }, [banners.length, isHovered, paginate]);
+  }, [safeBanners.length, isHovered, paginate]);
 
   const handleDragEnd = (_: any, { offset, velocity }: PanInfo) => {
     const swipe = swipePower(offset.x, velocity.x);
     if (swipe < -swipeConfidenceThreshold) paginate(1);
     else if (swipe > swipeConfidenceThreshold) paginate(-1);
   };
-
-  if (banners.length === 0) return null;
 
   return (
     <div
@@ -65,7 +79,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
       {/* Background blur layer */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src={banners[index].image_url}
+          src={safeBanners[index].image_url}
           alt=""
           className="h-full w-full scale-110 object-cover blur-2xl opacity-40"
         />
@@ -92,16 +106,16 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
           className="absolute inset-0 cursor-grab active:cursor-grabbing"
         >
           <img
-            src={banners[index].image_url}
-            alt={banners[index].title || 'Banner'}
-            className="h-full w-full object-cover"
+            src={safeBanners[index].image_url}
+            alt={safeBanners[index].title || 'Banner'}
+            className="h-full w-full object-cover object-center"
           />
 
           {/* Gradient overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
           {/* Title overlay */}
-          {banners[index].title && (
+          {safeBanners[index].title && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -109,7 +123,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               className="absolute bottom-20 left-0 right-0 px-6 text-center"
             >
               <h3 className="text-2xl font-bold font-serif text-white drop-shadow-lg">
-                {banners[index].title}
+                {safeBanners[index].title}
               </h3>
             </motion.div>
           )}
@@ -117,7 +131,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
       </AnimatePresence>
 
       {/* Navigation arrows */}
-      {banners.length > 1 && (
+      {safeBanners.length > 1 && (
         <>
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -139,9 +153,9 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
       )}
 
       {/* Dots indicator */}
-      {banners.length > 1 && (
+      {safeBanners.length > 1 && (
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-          {banners.map((_, i) => (
+          {safeBanners.map((_, i) => (
             <motion.button
               key={i}
               onClick={() => setPage([i, i > index ? 1 : -1])}
@@ -152,7 +166,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               {i === index && (
                 <motion.div
                   layoutId="activeDot"
-                  className="absolute inset-0 rounded-full gold-gradient"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
                   transition={{ type: 'spring', stiffness: 300 }}
                 />
               )}
@@ -162,9 +176,9 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
       )}
 
       {/* Slide counter */}
-      {banners.length > 1 && (
+      {safeBanners.length > 1 && (
         <div className="absolute right-4 top-4 z-10 rounded-full bg-black/30 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          {index + 1} / {banners.length}
+          {index + 1} / {safeBanners.length}
         </div>
       )}
     </div>
