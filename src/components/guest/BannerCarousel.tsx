@@ -34,26 +34,47 @@ const slideVariants = {
 export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isHovered, setIsHovered] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  // 🔥 MUHIM: banners undefined yoki bo'sh bo'lsa, hech narsa ko'rsatma
-  if (!banners || banners.length === 0) {
-    console.log("⏳ BannerCarousel: No banners yet, waiting...");
-    return null;
+  // 🔥 KRITIK: banners ma'lumotini LOCAL STATE ga saqlaymiz
+  const [localBanners, setLocalBanners] = useState<Banner[]>([]);
+
+  useEffect(() => {
+    // Faqat banners mavjud va array bo'lsa
+    if (banners && Array.isArray(banners) && banners.length > 0) {
+      console.log("✅ Setting banners:", banners.length);
+      setLocalBanners(banners);
+      setIsReady(true);
+    } else {
+      console.log("⏳ Waiting for banners...");
+    }
+  }, [banners]);
+
+  // Agar ma'lumot bo'lmasa, hech narsa ko'rsatma
+  if (!isReady || localBanners.length === 0) {
+    return (
+      <div 
+        className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl shadow-2xl bg-gray-200 animate-pulse"
+        style={{ aspectRatio: '9/16' }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-gray-500">Loading banners...</p>
+        </div>
+      </div>
+    );
   }
 
-  console.log("✅ BannerCarousel: Rendering with", banners.length, "banners");
-
-  const index = ((page % banners.length) + banners.length) % banners.length;
+  const index = ((page % localBanners.length) + localBanners.length) % localBanners.length;
 
   const paginate = useCallback((newDirection: number) => {
     setPage(([p]) => [p + newDirection, newDirection]);
   }, []);
 
   useEffect(() => {
-    if (banners.length <= 1 || isHovered) return;
+    if (localBanners.length <= 1 || isHovered) return;
     const timer = setInterval(() => paginate(1), 4500);
     return () => clearInterval(timer);
-  }, [banners.length, isHovered, paginate]);
+  }, [localBanners.length, isHovered, paginate]);
 
   const handleDragEnd = (_: any, { offset, velocity }: PanInfo) => {
     const swipe = swipePower(offset.x, velocity.x);
@@ -68,10 +89,10 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Blur background */}
+      {/* Background blur */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src={banners[index].image_url}
+          src={localBanners[index].image_url}
           alt=""
           className="h-full w-full scale-110 object-cover blur-2xl opacity-40"
         />
@@ -97,13 +118,14 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
           className="absolute inset-0 cursor-grab active:cursor-grabbing"
         >
           <img
-            src={banners[index].image_url}
-            alt={banners[index].title || 'Banner'}
+            src={localBanners[index].image_url}
+            alt={localBanners[index].title || 'Banner'}
             className="h-full w-full object-cover object-center"
           />
+          
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
           
-          {banners[index].title && (
+          {localBanners[index].title && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -111,15 +133,15 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
               className="absolute bottom-20 left-0 right-0 px-6 text-center"
             >
               <h3 className="text-2xl font-bold font-serif text-white drop-shadow-lg">
-                {banners[index].title}
+                {localBanners[index].title}
               </h3>
             </motion.div>
           )}
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigatsiya */}
-      {banners.length > 1 && (
+      {/* Navigation */}
+      {localBanners.length > 1 && (
         <>
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -140,35 +162,27 @@ export default function BannerCarousel({ banners }: { banners?: Banner[] }) {
         </>
       )}
 
-      {/* Nuqtalar */}
-      {banners.length > 1 && (
+      {/* Dots */}
+      {localBanners.length > 1 && (
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-          {banners.map((_, i) => (
-            <motion.button
+          {localBanners.map((_, i) => (
+            <button
               key={i}
               onClick={() => setPage([i, i > index ? 1 : -1])}
-              className="relative h-2 rounded-full bg-white/30"
-              animate={{ width: i === index ? 24 : 8 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              {i === index && (
-                <motion.div
-                  layoutId="activeDot"
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
-                  transition={{ type: 'spring', stiffness: 300 }}
-                />
-              )}
-            </motion.button>
+              className={`relative h-2 rounded-full transition-all duration-300 ${
+                i === index ? 'w-6 bg-amber-500' : 'w-2 bg-white/50'
+              }`}
+            />
           ))}
         </div>
       )}
 
-      {/* Sanoq */}
-      {banners.length > 1 && (
+      {/* Counter */}
+      {localBanners.length > 1 && (
         <div className="absolute right-4 top-4 z-10 rounded-full bg-black/30 px-3 py-1 text-xs text-white backdrop-blur-sm">
-          {index + 1} / {banners.length}
+          {index + 1} / {localBanners.length}
         </div>
       )}
     </div>
   );
-}    
+}
